@@ -140,7 +140,7 @@ def sim_anrate_zbc2014(
         fs=100e3,
         fibertype="hsr",
         powerlaw="true",
-        noisetype="none",
+        noisetype="fresh",
 ):
     """ Simulates AN firing rate response to inner-hair-cell potential
 
@@ -155,11 +155,11 @@ def sim_anrate_zbc2014(
       nrep:
         Number of reps to simulate (must match input to sim_ihc_zbc2014)
       fibertype:
-        Whether to simulate high-spont (hsr), medium-spont (msr), or low-spont (lsr) fibers
+        Whether to simulate high-spont ("hsr"), medium-spont ("msr"), or low-spont ("lsr") fibers
       powerlaw:
-        Whether to use true (true) or approximate (approx) implementation of powerlaw adaptation
+        Whether to use true ("true") or approximate ("approx") implementation of powerlaw adaptation
       noisetype:
-        Whether to use no fractional Gaussian noise (none)... other options unavailable at the moment!
+        Whether to use no fractional Gaussian noise ("none") or fresh fractional Gaussian noise ("fresh")
     """
     # First, enforce assumptions about inputs
     assert np.ndim(ihc) == 1  # input is 1D vector
@@ -194,9 +194,11 @@ def sim_anrate_zbc2014(
 
     # Synthesize fGn based on noisetype param
     if noisetype == "none":
-      fGn = np.zeros(len_noise)
+        fGn = np.zeros(len_noise)
+    elif noisetype == "fresh":
+        fGn = ffGn(len(ihc), 1/fs, 0.9, fibertype)
     else:
-      ValueError("noisetype must be in: [none, ]")
+        ValueError("noisetype not recognized, must be in [none, fresh]")
 
     # Open library, fetch IHCAN function, declare input types for call
     lib = ctypes.cdll.LoadLibrary("./model/libzbc2014.so")
@@ -220,3 +222,86 @@ def sim_anrate_zbc2014(
     # Return synout passed through the pointwise nonlinearity mapping from pre-refractory
     # to post-refractory rates
     return synout / (1.0 + 0.75e-3 * synout)
+
+
+def ffGn(N, tdres, Hinput, fibertype):
+    """
+    Generates fractional Gaussian noise (fGn) based on the specified parameters.
+
+    Adapted from original code provided in the 2014 model release, as well as the Python
+    translation in the defunct cochlea Python package. Documentation does not extend much
+    beyond that offered by the original code; for a more detailed explanation of the
+    function and a better implementation of it, see the function `ffGn_rochester` at 
+    https://osf.io/6bsnt/. An important note is that the parameter values listed in the 2009
+    model paper (https://doi.org/10.1121/1.3238250) are incorrect, and instead the values
+    below should be use (and match was was present in the 2009/2014 code releases).
+
+    Parameters:
+    N (int): Number of points to generate.
+    tdres (float): Time-domain resolution (i.e., 1/fs; s)
+    Hinput (float): Hurst parameter, must be in the range [0, 2].
+    spont (float): Fiber type/spont group of the AN fiber to be simulated in [hsr, msr, lsr], used to determine noise sigma
+
+    Returns:
+    np.ndarray: Array of generated noise values, of size (N, )
+    """
+    assert (N > 0)
+    assert (tdres < 1)
+    assert (Hinput >= 0) and (Hinput <= 2)
+
+    # Downsampling No. of points to match with those of Scott Jackson (tau 1e-1)
+    resamp = int(np.ceil(1e-1 / tdres))
+    nop = N
+    N = int(np.ceil(N / resamp) + 1)
+    if N < 10:
+        N = 10
+
+    # Determine whether fGn or fBn should be produced.
+    if Hinput <= 1:
+        H = Hinput
+        fBn = 0
+    else:
+        H = Hinput - 1
+        fBn = 1
+
+    # Calculate the fGn.
+    if H == 0.5:
+        # If H=0.5, then fGn is equivalent to white Gaussian noise.
+        y = np.random.randn(N)
+    else:
+        Nfft = int(2 ** np.ceil(np.log2(2*(N-1))))
+        NfftHalf = np.round(Nfft / 2)
+
+        k = np.concatenate( (np.arange(0,NfftHalf), np.arange(NfftHalf,0,-1)) )
+        Zmag = 0.5 * ( (k+1)**(2*H) -2*k**(2*H) + np.abs(k-1)**(2*H) )
+
+        Zmag = np.real(np.random.fft(Zmag))
+        assert np.all(Zmag >= 0)
+
+        Zmag = np.sqrt(Zmag)
+
+        Z = Zmag * (np.random.randn(Nfft) + 1j*np.random.randn(Nfft))
+
+        y = np.real(np.fft.ifft(Z)) * np.sqrt(Nfft)
+
+        y = y[0:N]
+
+        # Convert the fGn to fBn, if necessary.
+        if fBn == 1:
+            y = np.cumsum(y)
+
+        # Resampling to match with the AN model
+        y = np.resample(y, resamp*len(y))
+
+        if fibertype == "lsr":
+            sigma = 3
+        elif fibertype == "msr":
+            sigma = 30
+        elif fibertype == "hsr":
+            sigma = 200
+        else:
+            ValueError("fibertype not recognized, must be in [hsr, msr, lsr]")
+
+        y = y*sigma
+
+        return y[0:nop]

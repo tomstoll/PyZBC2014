@@ -13,27 +13,18 @@ folder and running the following code for GCC (or equivalent code, based on your
 compiler):
 
 ### Windows (with gcc)
+Installing and using C compilers on Windows can be a pain; you may want to try https://www.msys2.org/.
+Below is an example compilation script with `gcc` available on Windows:
 ```
-gcc -c -Wall -fPIC -O3 complex.c 
-gcc -c -Wall -fPIC -O3 model_IHC.c
-gcc -c -Wall -fPIC -O3 model_Synapse.c
+gcc -c -fPIC -O3 complex.c 
+gcc -c -fPIC -O3 model_IHC.c
+gcc -c -fPIC -O3 model_Synapse.c
 gcc -shared -o libzbc2014.so complex.o model_IHC.o model_Syanpse.o
 ```
-There may be some protests from the compiler about the `-fPIC` flag; send me the outputs of any failed compilation and I'll try to diagnose!
-
-### Unix (with gcc)
-```
-gcc -c -Wall -fPIC -O3 complex.c 
-gcc -c -Wall -fPIC -O3 model_IHC.c
-gcc -c -Wall -fPIC -O3 model_Synapse.c
-gcc -shared -o libzbc2014.so complex.o model_IHC.o model_Syanpse.o
-```
-
-### Other operating systems
-Try and let me know?
 
 ## Modify paths
 Finally, you will need to modify the paths defined in `pyzbc2014.py` accordingly.
+[[FINISH]]
 
 # Usage
 PyZBC2014 defines two function, `sim_ihc_zbc2014` and `sim_anrate_zbc2014`, to simulate inner-hair-cell (IHC) potentials from sound-pressure waveforms or AN instantaneous rates from IHC potentials, respectively.
@@ -51,7 +42,7 @@ Parameters can be modified by keyword arguments:
 
 The full function call using default keyword arguments is thus:
 ```
-ihc_potential = sim_ihc_zbc2014(px, cf=1e3, nrep=1, fs=100e3, cohc=1.0, cihc=1.0, species=2)
+ihc_potential = sim_ihc_zbc2014(px, cf=1e3, nrep=1, fs=100e3, cohc=1.0, cihc=1.0, species="human")
 ```
 
 ## Simulate AN response
@@ -62,7 +53,7 @@ Parameters can be modified by keyword arguments:
 - `fs`: Sampling rate (Hz), should generally be at least 100 kHz, and higher for cat/very-high-CF simulations, should always match value used for `sim_ihc_zbc2014`
 - `fibertype`: String encoding which fiber type to simulate in [`"hsr"`, `"msr"`, `"lsr"`]
 - `powerlaw`: String encoding whether to use true powerlaw adaptation (`"true"`) or approximate powerlaw adaptation (`"approx"`). In the MATLAB/Mex wrapper, `implnt=1` corresponds to `"true"` and `implnt=0` corresponds to `"approx"`
-- `noisetype`: String encoding whether to use no fractional Gaussian noise (`"none"`), frozen noise (`"frozen"`), or fresh noise (`"fresh"`). In the MATLAB/Mex wrapper, `noiseType=0` corresponds to `"frozen"` and `noiseType=1` corresponds to `"fresh"`
+- `noisetype`: String encoding whether to use no fractional Gaussian noise (`"none"`), or fresh noise (`"fresh"`). In the MATLAB/Mex wrapper, `noiseType=1` corresponds to `"fresh"`
 
 The full function call using default keyword arguments is thus:
 ```
