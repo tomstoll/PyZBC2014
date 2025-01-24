@@ -37,7 +37,7 @@
     M. S. A. Zilany <msazilany@gmail.com> 
     Ian C. Bruce <ibruce@ieee.org> 
     Laurel H. Carney <laurel_carney@urmc.rochester.edu>
-    Daniel R. Guest <dguest2@urmc.rochester.edu>
+    Daniel R. Guest <daniel_guest@urmc.rochester.edu>
 
   This program is free software: you can redistribute it and/or modify it under the terms of
   the GNU Affero General Public License as published by the Free Software Foundation, either
