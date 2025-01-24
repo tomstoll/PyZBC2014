@@ -49,6 +49,7 @@
 # program. If not, see <http://www.gnu.org/licenses/>.
 
 import numpy as np
+import scipy as sp
 import ctypes
 from numpy.ctypeslib import ndpointer
 import warnings
@@ -164,24 +165,25 @@ def sim_anrate_zbc2014(
     # First, enforce assumptions about inputs
     assert np.ndim(ihc) == 1  # input is 1D vector
     assert nrep >= 1  # number of reps is geq 1
+    assert fibertype in ["hsr", "msr", "lsr"]
+    assert powerlaw in ["true", "approx"]
+    assert noisetype in ["none", "fresh"]
 
     # Second, map from fibertype string to spont value
-    if fibertype == "hsr":
-        spont = 100.0
-    elif fibertype == "msr":
-        spont = 4.0
-    elif fibertype == "lsr":
-        spont = 0.1
-    else:
-        ValueError("fibertype not recognized, must be in [hsr, msr, lsr]")
+    match fibertype:
+        case "hsr":
+            spont = 100.0
+        case "msr":
+            spont = 4.0
+        case "hsr":
+            spont = 0.1
 
     # Third, map from implnt string to integer value
-    if powerlaw == "true":
-        implnt = 1.0
-    elif powerlaw == "approx":
-        implnt = 0.0
-    else:
-        ValueError("powerlaw not recognized, must be in [true, approx]")
+    match powerlaw:
+        case "true":
+            implnt = 1.0
+        case "approx":
+            implnt = 0.0
 
     # Emit warnings
     if fs < 100e3:
@@ -193,12 +195,11 @@ def sim_anrate_zbc2014(
     len_noise = int(np.ceil((len(ihc) + 2 * np.floor(7500 / (cf / 1e3))) * 1/fs * 10e3))
 
     # Synthesize fGn based on noisetype param
-    if noisetype == "none":
-        fGn = np.zeros(len_noise)
-    elif noisetype == "fresh":
-        fGn = ffGn(len(ihc), 1/fs, 0.9, fibertype)
-    else:
-        ValueError("noisetype not recognized, must be in [none, fresh]")
+    match noisetype:
+        case "none":
+            fGn = np.zeros(len_noise)
+        case "fresh":
+            fGn = ffGn(len(ihc), 1/fs, 0.9, fibertype)
 
     # Open library, fetch IHCAN function, declare input types for call
     lib = ctypes.cdll.LoadLibrary("./model/libzbc2014.so")
@@ -275,7 +276,7 @@ def ffGn(N, tdres, Hinput, fibertype):
         k = np.concatenate( (np.arange(0,NfftHalf), np.arange(NfftHalf,0,-1)) )
         Zmag = 0.5 * ( (k+1)**(2*H) -2*k**(2*H) + np.abs(k-1)**(2*H) )
 
-        Zmag = np.real(np.random.fft(Zmag))
+        Zmag = np.real(np.fft.fft(Zmag))
         assert np.all(Zmag >= 0)
 
         Zmag = np.sqrt(Zmag)
@@ -291,7 +292,7 @@ def ffGn(N, tdres, Hinput, fibertype):
             y = np.cumsum(y)
 
         # Resampling to match with the AN model
-        y = np.resample(y, resamp*len(y))
+        y = sp.signal.resample(y, resamp*len(y))
 
         if fibertype == "lsr":
             sigma = 3
