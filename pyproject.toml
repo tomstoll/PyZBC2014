@@ -7,3 +7,7 @@ name = "pyzbc2014"
 version = "0.0.1"
 authors = [{name = "Daniel Guest", email="daniel_guest@urmc.rochester.edu"}]
 readme = "README.md"
+dependencies = [
+    "numpy>=1.21.0",
+    "scipy>=1.7.0"
+]
