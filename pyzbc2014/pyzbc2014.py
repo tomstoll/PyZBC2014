@@ -53,7 +53,10 @@ import scipy as sp
 import ctypes
 from numpy.ctypeslib import ndpointer
 import warnings
+import pkg_resources
 
+# Locate the shared library and load the library
+lib_path = pkg_resources.resource_filename('pyzbc2014', 'model/libzbc2014.so')
 
 def sim_ihc_zbc2014(
         px, 
@@ -115,7 +118,7 @@ def sim_ihc_zbc2014(
             species_int = 3
 
     # Open library, fetch IHCAN function, declare input types for call
-    lib = ctypes.cdll.LoadLibrary("./model/libzbc2014.so")
+    lib = ctypes.cdll.LoadLibrary(lib_path)
     fun = lib.IHCAN
     fun.argtypes = [
         ndpointer(ctypes.c_double),
@@ -202,7 +205,7 @@ def sim_anrate_zbc2014(
             fGn = ffGn(len(ihc), 1/fs, 0.9, fibertype)
 
     # Open library, fetch IHCAN function, declare input types for call
-    lib = ctypes.cdll.LoadLibrary("./model/libzbc2014.so")
+    lib = ctypes.cdll.LoadLibrary(lib_path)
     fun = lib.Synapse
     fun.argtypes = [
         ndpointer(ctypes.c_double),  # ihcout

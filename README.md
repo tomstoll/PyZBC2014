@@ -1,6 +1,9 @@
 # Introduction
-PyZBC2014 is a barebones Python wrapper around the Zilany, Bruce, and Carney (2014) auditory-nerve (AN) model, which is written in C/Mex. 
-It is licensed under the GNU AGPLv3 license (see `LICENSE`).
+PyZBC2014 is a barebones Python 3 wrapper around the Zilany, Bruce, and Carney (2014) auditory-nerve (AN) model, which is written in C. 
+Currently, PyZBC2014 is set up as a Python package (i.e., it can be imported like `using pyzbc2014 as zbc` in Python scripts), but installing PyZBC2014 currently requires some manual steps.
+While the author recollects how to do these steps automatically, the package is not available from Python package repositories and must be manually installed!
+
+PyZBC2014 is licensed under the GNU AGPLv3 license (see `LICENSE`).
 Please send any questions or issues to `daniel_guest@urmc.rochester.edu`, or raise an issue on the [GitHub page](https://github.com/guestdaniel/PyZBC2014).
 
 # Install
@@ -8,23 +11,25 @@ Please send any questions or issues to `daniel_guest@urmc.rochester.edu`, or rai
 To install PyZBC2014, first download and unpack the files from [GitHub page](https://github.com/guestdaniel/PyZBC2014).
 
 ## Compile model
-Next, compile the `.c` files that are bundled with the package by navigating to the `model`
+Next, compile the `.c` files that are bundled with the package by navigating to the `pyzbc2014/model`
 folder and running the following code for GCC (or equivalent code, based on your C
-compiler):
+compiler).
+If you are successful, you should see a file called `libzbc2014.so` in the `model` folder, alongside `.c`, `.o`, and some other files.
 
 ### Windows (with gcc)
 Installing and using C compilers on Windows can be a pain; you may want to try https://www.msys2.org/.
-Below is an example compilation script with `gcc` available on Windows:
+With `gcc` installed, the following command will compile the model:
 ```
-gcc -c -fPIC -O3 complex.c 
-gcc -c -fPIC -O3 model_IHC.c
-gcc -c -fPIC -O3 model_Synapse.c
-gcc -shared -o libzbc2014.so complex.o model_IHC.o model_Syanpse.o
+gcc -Wall -fPIC -O3 -shared -o libzbc2014.so complex.c model_IHC.c model_Synapse.c
 ```
 
-## Modify paths
-Finally, you will need to modify the paths defined in `pyzbc2014.py` accordingly.
-[[FINISH]]
+### Install package
+Finally, to install the package, activate your desired Python environment and, and the top-level folder, use:
+```
+pip install .
+```
+Adjust `pip` to `pip3` or others as needed based on yur Python environment configuration.
+If installation succeeds, you should now be able to `import pyzbc2014 as zbc`
 
 # Usage
 PyZBC2014 defines two function, `sim_ihc_zbc2014` and `sim_anrate_zbc2014`, to simulate inner-hair-cell (IHC) potentials from sound-pressure waveforms or AN instantaneous rates from IHC potentials, respectively.
