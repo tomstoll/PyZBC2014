@@ -23,3 +23,16 @@ for i in range(cfs.size):
 
 plt.plot(cfs, rates)
 plt.show()
+
+# Plot population neurogram (high resolution)
+cfs = np.exp(np.linspace(np.log(0.5e3), np.log(2e3), 51))
+rates = []
+for i in range(cfs.size):
+    ihcout = zbc.sim_ihc_zbc2014(x, cf=cfs[i])
+    anout = zbc.sim_anrate_zbc2014(ihcout, cf=cfs[i], noisetype="none")
+    rates.append(anout)
+
+plt.pcolormesh(t, np.log2(cfs / 1e3), np.array(rates))
+plt.show()
+plt.ylabel("CF (oct re: 1 kHz)")
+plt.xlabel("Time (s)")

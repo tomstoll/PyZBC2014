@@ -1,14 +1,13 @@
 # Introduction
 PyZBC2014 is a barebones Python 3 wrapper around the Zilany, Bruce, and Carney (2014) auditory-nerve (AN) model, which is written in C. 
 Currently, PyZBC2014 is set up as a Python package (i.e., it can be imported like `using pyzbc2014 as zbc` in Python scripts), but installing PyZBC2014 currently requires some manual steps.
-While the author recollects how to do these steps automatically, the package is not available from Python package repositories and must be manually installed!
 
 PyZBC2014 is licensed under the GNU AGPLv3 license (see `LICENSE`).
 Please send any questions or issues to `daniel_guest@urmc.rochester.edu`, or raise an issue on the [GitHub page](https://github.com/guestdaniel/PyZBC2014).
 
 # Install
 ## Download
-To install PyZBC2014, first download and unpack the files from [GitHub page](https://github.com/guestdaniel/PyZBC2014).
+To install PyZBC2014, first download (and, if needed, unpack) the files from [GitHub page](https://github.com/guestdaniel/PyZBC2014).
 
 ## Compile model
 Next, compile the `.c` files that are bundled with the package by navigating to the `pyzbc2014/model`
@@ -23,13 +22,19 @@ With `gcc` installed, the following command will compile the model:
 gcc -Wall -fPIC -O3 -shared -o libzbc2014.so complex.c model_IHC.c model_Synapse.c
 ```
 
-### Install package
+## Install package
 Finally, to install the package, activate your desired Python environment and, and the top-level folder, use:
 ```
 pip install .
 ```
 Adjust `pip` to `pip3` or others as needed based on yur Python environment configuration.
 If installation succeeds, you should now be able to `import pyzbc2014 as zbc`
+
+## Uninstall package
+Use pip to uninstall:
+```
+pip uninstall pyzbc2014
+```
 
 # Usage
 PyZBC2014 defines two function, `sim_ihc_zbc2014` and `sim_anrate_zbc2014`, to simulate inner-hair-cell (IHC) potentials from sound-pressure waveforms or AN instantaneous rates from IHC potentials, respectively.
