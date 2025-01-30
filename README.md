@@ -23,11 +23,11 @@ gcc -Wall -fPIC -O3 -shared -o libzbc2014.so complex.c model_IHC.c model_Synapse
 ```
 
 ## Install package
-Finally, to install the package, activate your desired Python environment and, and the top-level folder, use:
+Finally, to install the package, activate your desired Python environment and, in the top-level folder, use:
 ```
 pip install .
 ```
-Adjust `pip` to `pip3` or others as needed based on yur Python environment configuration.
+Adjust `pip` to `pip3` or others as needed based on your Python environment configuration.
 If installation succeeds, you should now be able to `import pyzbc2014 as zbc`
 
 ## Uninstall package
