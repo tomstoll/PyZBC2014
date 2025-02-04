@@ -19,7 +19,7 @@ If you are successful, you should see a file called `libzbc2014.so` in the `mode
 Installing and using C compilers on Windows can be a pain; you may want to try https://www.msys2.org/.
 With `gcc` installed, the following command will compile the model:
 ```
-gcc -Wall -fPIC -O3 -shared -o libzbc2014.so complex.c model_IHC.c model_Synapse.c
+gcc -fPIC -O3 -shared -o libzbc2014.so complex.c model_IHC.c model_Synapse.c
 ```
 
 ## Install package
