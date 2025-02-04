@@ -95,7 +95,7 @@ def sim_ihc_zbc2014(
     assert 0 <= cohc <= 1  # C_OHC is between zero and one
     assert 0 <= cihc <= 1  # C_IHC is between zero and one
     assert species in ["cat", "human", "human-glasberg"]  # species is one of available options
-    if species == 1:
+    if species == "cat":
         assert .125e3 <= cf <= 40e3  # for cat, CF must be between 0.125 and 40 kHz
     else:
         assert .125e3 <= cf <= 20e3  # for human, CF must be between 0.125 and 20 kHz
