@@ -10,6 +10,7 @@ setup(
         "numpy>=1.21.0",
         "scipy>=1.7.0"
     ],
+    include_package_data=True,
     package_data={
         'pyzbc2014': ['pyzbc2014/model/libzbc2014.so'],
     },
