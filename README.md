@@ -1,6 +1,6 @@
 # Introduction
-PyZBC2014 is a barebones Python 3 wrapper around the Zilany, Bruce, and Carney (2014) auditory-nerve (AN) model, which is written in C. 
-Currently, PyZBC2014 is set up as a Python package (i.e., it can be imported like `using pyzbc2014 as zbc` in Python scripts), but installing PyZBC2014 currently requires some manual steps.
+PyZBC2014 is a barebones Python 3 wrapper around the Zilany, Bruce, and Carney (2014) auditory-nerve (AN) model, which is written in C.
+Currently, PyZBC2014 is set up as a Python package (i.e., it can be imported like `import pyzbc2014 as zbc` in Python scripts), but installing PyZBC2014 currently requires some manual steps.
 
 PyZBC2014 is licensed under the GNU AGPLv3 license (see `LICENSE`).
 Please send any questions or issues to `daniel_guest@urmc.rochester.edu`, or raise an issue on the [GitHub page](https://github.com/guestdaniel/PyZBC2014).
