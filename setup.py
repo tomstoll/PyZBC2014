@@ -1,5 +1,6 @@
 from setuptools import setup
 from setuptools.command.build_py import build_py as build_py_orig
+from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 import subprocess
 import sys
 import os
@@ -7,29 +8,24 @@ import shutil
 
 class build_py(build_py_orig):
     def run(self):
-        # Path to C sources and output so file
+        # Path to C sources and output so/dll file
         this_dir = os.path.abspath(os.path.dirname(__file__))
         model_dir = os.path.join(this_dir, "pyzbc2014", "model")
         so_name = "libzbc2014"
-        ext = {
-            "linux": ".so",
-            "darwin": ".so",
-            "win32": ".dll"
-        }[sys.platform if sys.platform != "darwin" else "darwin"]
-
+        if sys.platform == "win32":
+            ext = ".dll"
+        else:
+            ext = ".so"
         so_path = os.path.join(model_dir, so_name + ext)
-
         sources = [
             os.path.join(model_dir, "complex.c"),
             os.path.join(model_dir, "model_IHC.c"),
             os.path.join(model_dir, "model_Synapse.c"),
         ]
 
-        if not os.path.exists(so_path):  # Only build if missing or forced
+        if not os.path.exists(so_path):
             print("Compiling C library for pyzbc2014...")
-            cmd = None
             if sys.platform == "win32":
-                # Use mingw32 (assumes gcc available via MSYS2 or similar)
                 cmd = [
                     "gcc",
                     "-shared",
@@ -48,8 +44,12 @@ class build_py(build_py_orig):
                 ]
             subprocess.check_call(cmd)
 
-        # Continue with normal build_py logic
         super().run()
+
+class bdist_wheel(_bdist_wheel):
+    def finalize_options(self):
+        super().finalize_options()
+        self.root_is_pure = False  # This makes the wheel platform-specific
 
 setup(
     name="pyzbc2014",
@@ -66,5 +66,8 @@ setup(
     package_data={
         'pyzbc2014': ['model/libzbc2014.*'],
     },
-    cmdclass={"build_py": build_py},
+    cmdclass={
+        "build_py": build_py,
+        "bdist_wheel": bdist_wheel,
+    },
 )
