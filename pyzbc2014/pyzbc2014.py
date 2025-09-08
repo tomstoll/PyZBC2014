@@ -53,10 +53,21 @@ import scipy as sp
 import ctypes
 from numpy.ctypeslib import ndpointer
 import warnings
+import sys
+import os
 import pkg_resources
 
 # Locate the shared library and load the library
-lib_path = pkg_resources.resource_filename('pyzbc2014', 'model/libzbc2014.so')
+ext = {
+    "darwin": ".so",
+    "linux": ".so",
+    "win32": ".dll"
+}[sys.platform if sys.platform != "darwin" else "darwin"]
+
+lib_path = pkg_resources.resource_filename('pyzbc2014', f'model/libzbc2014{ext}')
+if not os.path.isfile(lib_path):
+    raise FileNotFoundError(f"Could not find compiled library: {lib_path}")
+
 
 def sim_ihc_zbc2014(
         px,
