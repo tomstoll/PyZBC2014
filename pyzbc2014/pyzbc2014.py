@@ -53,20 +53,20 @@ import scipy as sp
 import ctypes
 from numpy.ctypeslib import ndpointer
 import warnings
-import sys
 import os
-import pkg_resources
 
-# Locate the shared library and load the library
-ext = {
-    "darwin": ".so",
-    "linux": ".so",
-    "win32": ".dll"
-}[sys.platform if sys.platform != "darwin" else "darwin"]
 
-lib_path = pkg_resources.resource_filename('pyzbc2014', f'model/libzbc2014{ext}')
-if not os.path.isfile(lib_path):
-    raise FileNotFoundError(f"Could not find compiled library: {lib_path}")
+def get_lib_path():
+    # Find the shared library built by setuptools.Extension
+    import pyzbc2014.model
+    model_dir = os.path.dirname(pyzbc2014.model.__file__)
+    for fname in os.listdir(model_dir):
+        if fname.startswith('libzbc2014.') and fname.endswith('.so'):
+            return os.path.join(model_dir, fname)
+    raise FileNotFoundError("Compiled library not found.")
+
+
+lib_path = get_lib_path()
 
 
 def sim_ihc_zbc2014(
