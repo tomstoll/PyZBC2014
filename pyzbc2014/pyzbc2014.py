@@ -8,8 +8,8 @@
 
 # Papers related to this code are cited below:
 
-# Zilany, M. S., & Bruce, I. C. (2006). Modeling auditory-nerve responses for high sound 
-# pressure levels in the normal and impaired auditory periphery. The Journal of the 
+# Zilany, M. S., & Bruce, I. C. (2006). Modeling auditory-nerve responses for high sound
+# pressure levels in the normal and impaired auditory periphery. The Journal of the
 # Acoustical Society of America, 120(3), 1446-1466.
 
 # * Zilany, M.S.A., Bruce, I.C., Nelson, P.C., and Carney, L.H. (2009). "A
@@ -26,23 +26,23 @@
 # "Improved parameters and expanded simulation options for a model of the
 # auditory periphery," in Abstracts of the 36th ARO Midwinter Research Meeting.
 
-# * Zilany, M. S., Bruce, I. C., & Carney, L. H. (2014). Updated parameters and expanded 
-# simulation options for a model of the auditory periphery. The Journal of the Acoustical 
+# * Zilany, M. S., Bruce, I. C., & Carney, L. H. (2014). Updated parameters and expanded
+# simulation options for a model of the auditory periphery. The Journal of the Acoustical
 # Society of America, 135(1), 283-286.
 
-# Please cite these papers marked with asterisks (*) if you publish any research results 
+# Please cite these papers marked with asterisks (*) if you publish any research results
 # obtained with this code or any modified versions of this code.
 
 
-# Zilany, Bruce, and Carney (2014) auditory-nerve model Python 3 wrapper, Copyright (C) 2024 
+# Zilany, Bruce, and Carney (2014) auditory-nerve model Python 3 wrapper, Copyright (C) 2024
 #   Daniel R. Guest <daniel_guest@urmc.rochester.edu>
 
 # This program is free software: you can redistribute it and/or modify it under the terms of
 # the GNU Affero General Public License as published by the Free Software Foundation, either
 # version 3 of the License, or (at your option) any later version.
 
-# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-# without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+# without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Affero General Public License for more details.
 
 # You should have received a copy of the GNU Affero General Public License along with this
@@ -59,18 +59,18 @@ import pkg_resources
 lib_path = pkg_resources.resource_filename('pyzbc2014', 'model/libzbc2014.so')
 
 def sim_ihc_zbc2014(
-        px, 
-        cf=1e3, 
-        nrep=1, 
-        fs=100e3, 
-        cohc=1.0, 
-        cihc=1.0, 
-        species="human", 
+        px,
+        cf=1e3,
+        nrep=1,
+        fs=100e3,
+        cohc=1.0,
+        cihc=1.0,
+        species="human",
 ):
     """ Simulates inner-hair-cell response to sound-pressure waveform.
 
-    Performs some basic input checking and then passes sound-pressure-waveform and 
-    pre-allocated output array to the C IHCAN function via the ctypes library. 
+    Performs some basic input checking and then passes sound-pressure-waveform and
+    pre-allocated output array to the C IHCAN function via the ctypes library.
 
     Args:
       px:
@@ -87,7 +87,7 @@ def sim_ihc_zbc2014(
         Status of the inner hair cells, in range of [0, 1] with 1 being fully normal/healthy
       species:
         String, either "cat", "human", or "human-glasberg" (corresponding to MATLAB/Mex wrapper species=1, species=2, and species=3 respectively)
-    
+
     """
     # First, enforce assumptions about inputs
     assert np.ndim(px) == 1  # input is 1D vector
@@ -138,9 +138,9 @@ def sim_ihc_zbc2014(
 
 
 def sim_anrate_zbc2014(
-        ihc, 
-        cf=1e3, 
-        nrep=1, 
+        ihc,
+        cf=1e3,
+        nrep=1,
         fs=100e3,
         fibertype="hsr",
         powerlaw="true",
@@ -148,8 +148,8 @@ def sim_anrate_zbc2014(
 ):
     """ Simulates AN firing rate response to inner-hair-cell potential
 
-    Performs some basic input checking and then passes IHC waveform and inputs to 
-    the C Synapse function via the ctypes library. 
+    Performs some basic input checking and then passes IHC waveform and inputs to
+    the C Synapse function via the ctypes library.
 
     Args:
       ihc:
@@ -178,7 +178,7 @@ def sim_anrate_zbc2014(
             spont = 100.0
         case "msr":
             spont = 4.0
-        case "hsr":
+        case "lsr":
             spont = 0.1
 
     # Third, map from implnt string to integer value
@@ -192,7 +192,7 @@ def sim_anrate_zbc2014(
     if fs < 100e3:
         warnings.warn("Note, time-domain resolution is less than recommended (sampling rate > 100 kHz, sampling period < 1e-5 s)")
 
-    # Allocate empty storage for output and for noise input 
+    # Allocate empty storage for output and for noise input
     # (length for noise input is determined based on magic equation extracted from source code)
     synout = np.zeros(len(ihc))
     len_noise = int(np.ceil((len(ihc) + 2 * np.floor(7500 / (cf / 1e3))) * 1/fs * 10e3))
@@ -235,7 +235,7 @@ def ffGn(N, tdres, Hinput, fibertype):
     Adapted from original code provided in the 2014 model release, as well as the Python
     translation in the defunct cochlea Python package. Documentation does not extend much
     beyond that offered by the original code; for a more detailed explanation of the
-    function and a better implementation of it, see the function `ffGn_rochester` at 
+    function and a better implementation of it, see the function `ffGn_rochester` at
     https://osf.io/6bsnt/. An important note is that the parameter values listed in the 2009
     model paper (https://doi.org/10.1121/1.3238250) are incorrect, and instead the values
     below should be use (and match was was present in the 2009/2014 code releases).
