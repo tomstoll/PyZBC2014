@@ -6,7 +6,8 @@ ext_modules = [
         sources=[
             "pyzbc2014/model/complex.c",
             "pyzbc2014/model/model_IHC.c",
-            "pyzbc2014/model/model_Synapse.c"
+            "pyzbc2014/model/model_Synapse.c",
+            "pyzbc2014/model/stubmodule.c",
         ],
         extra_compile_args=["-O3"],
         # If you have .h files needed, this will work as long as they are in the same directory.
