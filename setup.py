@@ -1,41 +1,51 @@
-from setuptools import setup, Extension, find_packages
-import re
+from setuptools import setup
+from setuptools.command.build_py import build_py as build_py_orig
 import os
+import sys
+import subprocess
 
+class build_py(build_py_orig):
+    def run(self):
+        # Custom build logic for the C library (as before)
+        this_dir = os.path.abspath(os.path.dirname(__file__))
+        model_dir = os.path.join(this_dir, "pyzbc2014", "model")
+        so_name = "libzbc2014"
+        ext = {
+            "linux": ".so",
+            "darwin": ".so",
+            "win32": ".dll"
+        }[sys.platform if sys.platform != "darwin" else "darwin"]
 
-def read_version():  # note: update version in pyzbc2014.__init__
-    with open(os.path.join(os.path.dirname(__file__), "pyzbc2014", "__init__.py")) as f:
-        m = re.search(r'__version__\s*=\s*["\']([^"\']+)["\']', f.read())
-    if not m:
-        raise RuntimeError("version string not found")
-    return m.group(1)
+        lib_path = os.path.join(model_dir, so_name + ext)
+        sources = [
+            os.path.join(model_dir, "complex.c"),
+            os.path.join(model_dir, "model_IHC.c"),
+            os.path.join(model_dir, "model_Synapse.c"),
+        ]
 
+        stub_c = os.path.join(model_dir, "stubmodule.c")
+        if os.path.exists(stub_c):
+            sources.append(stub_c)
 
-ext_modules = [
-    Extension(
-        "pyzbc2014.model.libzbc2014",    # This will create a Python extension module in pyzbc2014/model
-        sources=[
-            "pyzbc2014/model/complex.c",
-            "pyzbc2014/model/model_IHC.c",
-            "pyzbc2014/model/model_Synapse.c",
-            "pyzbc2014/model/stubmodule.c",
-        ],
-        extra_compile_args=["-O3"],
-        # If you have .h files needed, this will work as long as they are in the same directory.
-    )
-]
+        if not os.path.exists(lib_path):
+            print(f"Compiling C library: {' '.join(sources)} -> {lib_path}")
+            if sys.platform == "win32":
+                cmd = [
+                    "gcc", "-shared", "-O3", "-o", lib_path, *sources
+                ]
+            else:
+                cmd = [
+                    "gcc", "-fPIC", "-O3", "-shared", "-o", lib_path, *sources
+                ]
+            subprocess.check_call(cmd)
+
+        super().run()
 
 setup(
-    name="pyzbc2014",
-    version=read_version(),
-    author="Daniel Guest",
-    author_email="daniel_guest@urmc.rochester.edu",
-    packages=find_packages(),
-    install_requires=[
-        "numpy>=1.21.0",
-        "scipy>=1.7.0"
-    ],
-    ext_modules=ext_modules,
+    cmdclass={"build_py": build_py},
     include_package_data=True,
-    zip_safe=False,  # Not strictly needed but sometimes helps with loading .so files
+    package_data={
+        "pyzbc2014.model": ["libzbc2014.*"]
+    },
+    zip_safe=False,
 )
