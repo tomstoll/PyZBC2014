@@ -1,5 +1,6 @@
 from setuptools import setup
 from setuptools.command.build_py import build_py as build_py_orig
+from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 import os
 import sys
 import subprocess
@@ -23,7 +24,6 @@ class build_py(build_py_orig):
             os.path.join(model_dir, "model_Synapse.c"),
         ]
 
-
         if not os.path.exists(lib_path):
             print(f"Compiling C library: {' '.join(sources)} -> {lib_path}")
             if sys.platform == "win32":
@@ -38,8 +38,16 @@ class build_py(build_py_orig):
 
         super().run()
 
+class bdist_wheel(_bdist_wheel):
+    def finalize_options(self):
+        super().finalize_options()
+        self.root_is_pure = False  # This marks the wheel as platform-specific
+
 setup(
-    cmdclass={"build_py": build_py},
+    cmdclass={
+        "build_py": build_py,
+        "bdist_wheel": bdist_wheel,
+    },
     include_package_data=True,
     package_data={
         "pyzbc2014.model": ["libzbc2014.*"]
