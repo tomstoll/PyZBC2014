@@ -17,6 +17,9 @@ jobs:
         with:
           python-version: 3.x
 
+      - name: Add src to PYTHONPATH
+        run: echo "PYTHONPATH=$PWD/src" >> $GITHUB_ENV
+
       - name: Install minimal dependencies for version check
         run: pip install numpy scipy
 
