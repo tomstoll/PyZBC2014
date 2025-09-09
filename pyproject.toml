@@ -20,4 +20,4 @@ version = {attr = "pyzbc2014.__version__"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["pyzbc2014*"]
+include = ["pyzbc2014*", "pyzbc2014.model*"]

@@ -59,7 +59,7 @@ def get_lib_path():
     from importlib.resources import files
 
     lib_names = []
-    for name in files('pyzbc2014.model').iterdir():
+    for name in files('pyzbc2014._lib').iterdir():
         if name.name.startswith('libzbc2014') and (
                 name.name.endswith('.so') or
                 name.name.endswith('.pyd') or
@@ -71,6 +71,7 @@ def get_lib_path():
 
     # If multiple matches, return the first
     return lib_names[0]
+
 
 
 def sim_ihc_zbc2014(
