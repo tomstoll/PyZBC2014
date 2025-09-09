@@ -17,6 +17,9 @@ jobs:
         with:
           python-version: 3.x
 
+      - name: Install minimal dependencies for version check
+        run: pip install numpy scipy
+
       - name: Check version matches tag
         run: |
           VERSION=$(python -c "import pyzbc2014; print(pyzbc2014.__version__)")
