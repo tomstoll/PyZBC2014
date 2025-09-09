@@ -1,0 +1,76 @@
+name: Version check, build and publish wheels
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+
+jobs:
+  check_version_matches_tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+
+      - name: Check version matches tag
+        run: |
+          VERSION=$(python -c "import pyzbc2014; print(pyzbc2014.__version__)")
+          TAG=${GITHUB_REF#refs/tags/v}
+          echo "Version found in package: $VERSION"
+          echo "Tag from git: $TAG"
+          if [ "$VERSION" != "$TAG" ]; then
+              echo "::error::Tag version (v$TAG) does NOT match pyzbc2014.__version__ ($VERSION)"
+              exit 1
+          fi
+  build_wheels:
+    needs: check_version_matches_tag
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install cibuildwheel
+        run: python -m pip install cibuildwheel
+
+      - name: Build wheels
+        run: python -m cibuildwheel --output-dir wheelhouse
+
+      - name: Upload wheels as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ runner.os }}
+          path: wheelhouse/*.whl
+
+  publish:
+    needs: build_wheels
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write   # REQUIRED for PyPI Trusted Publisher
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download all wheels
+        uses: actions/download-artifact@v4
+        with:
+          pattern: wheels-*
+          merge-multiple: true
+          path: ./wheelhouse
+
+      - name: Publish to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          packages-dir: ./wheelhouse/
