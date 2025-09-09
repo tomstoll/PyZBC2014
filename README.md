@@ -51,6 +51,12 @@ The full function call using default keyword arguments is thus:
 anrate = sim_anrate_zbc2014(ihc, cf=1e3, nrep=1, fs=100e3, fibertype="hsr", powerlaw="approx", noisetype="fresh")
 ```
 
+# Citing
+If you use this code, please cite the model paper:
+
+Zilany, M. S., Bruce, I. C., & Carney, L. H. (2014). Updated parameters and expanded simulation options for a model of the auditory periphery. The Journal of the Acoustical Society of America, 135(1), 283-286.
+
+
 # Developers
 This package is setup to build wheels and publish to PyPI whenever the version is incremented. To make any updates, follow these steps:
 1. Edit the code, fix bugs, update docs, etc.

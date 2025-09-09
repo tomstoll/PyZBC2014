@@ -17,3 +17,6 @@ dependencies = [
 
 [tool.setuptools.dynamic]
 version = {attr = "pyzbc2014.__version__"}
+
+[tool.setuptools.packages.find]
+include = ["pyzbc2014*"]
