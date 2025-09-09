@@ -1,4 +1,15 @@
 from setuptools import setup, Extension, find_packages
+import re
+import os
+
+
+def read_version():  # note: update version in pyzbc2014.__init__
+    with open(os.path.join(os.path.dirname(__file__), "pyzbc2014", "__init__.py")) as f:
+        m = re.search(r'__version__\s*=\s*["\']([^"\']+)["\']', f.read())
+    if not m:
+        raise RuntimeError("version string not found")
+    return m.group(1)
+
 
 ext_modules = [
     Extension(
@@ -16,7 +27,7 @@ ext_modules = [
 
 setup(
     name="pyzbc2014",
-    version="0.0.2",
+    version=read_version(),
     author="Daniel Guest",
     author_email="daniel_guest@urmc.rochester.edu",
     packages=find_packages(),
