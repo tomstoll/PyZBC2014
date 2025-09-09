@@ -23,9 +23,6 @@ class build_py(build_py_orig):
             os.path.join(model_dir, "model_Synapse.c"),
         ]
 
-        stub_c = os.path.join(model_dir, "stubmodule.c")
-        if os.path.exists(stub_c):
-            sources.append(stub_c)
 
         if not os.path.exists(lib_path):
             print(f"Compiling C library: {' '.join(sources)} -> {lib_path}")
