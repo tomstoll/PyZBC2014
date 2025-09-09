@@ -5,34 +5,36 @@ import os
 import sys
 import subprocess
 
+# ------------------------
+# Define this at the top
+so_name = "libzbc2014"
+ext = {
+    "linux": ".so",
+    "darwin": ".so",
+    "win32": ".dll"
+}[sys.platform if sys.platform != "darwin" else "darwin"]
+lib_path = os.path.join("pyzbc2014", "model", so_name + ext)
+# ------------------------
+
 class build_py(build_py_orig):
     def run(self):
-        # Custom build logic for the C library (as before)
         this_dir = os.path.abspath(os.path.dirname(__file__))
         model_dir = os.path.join(this_dir, "pyzbc2014", "model")
-        so_name = "libzbc2014"
-        ext = {
-            "linux": ".so",
-            "darwin": ".so",
-            "win32": ".dll"
-        }[sys.platform if sys.platform != "darwin" else "darwin"]
-
-        lib_path = os.path.join(model_dir, so_name + ext)
         sources = [
             os.path.join(model_dir, "complex.c"),
             os.path.join(model_dir, "model_IHC.c"),
             os.path.join(model_dir, "model_Synapse.c"),
         ]
-
-        if not os.path.exists(lib_path):
-            print(f"Compiling C library: {' '.join(sources)} -> {lib_path}")
+        full_lib_path = os.path.join(model_dir, so_name + ext)
+        if not os.path.exists(full_lib_path):
+            print(f"Compiling C library: {' '.join(sources)} -> {full_lib_path}")
             if sys.platform == "win32":
                 cmd = [
-                    "gcc", "-shared", "-O3", "-o", lib_path, *sources
+                    "gcc", "-shared", "-O3", "-o", full_lib_path, *sources
                 ]
             else:
                 cmd = [
-                    "gcc", "-fPIC", "-O3", "-shared", "-o", lib_path, *sources
+                    "gcc", "-fPIC", "-O3", "-shared", "-o", full_lib_path, *sources
                 ]
             subprocess.check_call(cmd)
 
@@ -41,7 +43,7 @@ class build_py(build_py_orig):
 class bdist_wheel(_bdist_wheel):
     def finalize_options(self):
         super().finalize_options()
-        self.root_is_pure = False  # This marks the wheel as platform-specific
+        self.root_is_pure = False
 
 setup(
     cmdclass={
@@ -49,8 +51,6 @@ setup(
         "bdist_wheel": bdist_wheel,
     },
     include_package_data=True,
-    package_data={
-        "pyzbc2014.model": ["libzbc2014.*"]
-    },
+    data_files=[("pyzbc2014/model", [lib_path])],
     zip_safe=False,
 )
