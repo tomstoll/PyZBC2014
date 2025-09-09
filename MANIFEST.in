@@ -1,3 +1,3 @@
-include pyzbc2014/model/*.c
-include pyzbc2014/model/*.h
-include pyzbc2014/model/*.hpp
+include src/pyzbc2014/model/*.c
+include src/pyzbc2014/model/*.h
+include src/pyzbc2014/model/*.hpp

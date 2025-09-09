@@ -51,6 +51,6 @@ setup(
         "build_py": build_py,
         "bdist_wheel": bdist_wheel,
     },
-    data_files=[("pyzbc2014/model", [lib_path])],
+    package_data={"pyzbc2014.model": ["libzbc2014.*"]},
     zip_safe=False,
 )
