@@ -1,7 +1,18 @@
 name: Build wheels
 
-on: [push, pull_request]
-
+on:
+  push:
+    paths:
+      - 'pyzbc2014/model/**'
+      - 'setup.py'
+      - 'pyproject.toml'
+      - '.github/workflows/build_wheels.yml'
+  pull_request:
+    paths:
+      - 'pyzbc2014/model/**'
+      - 'setup.py'
+      - 'pyproject.toml'
+      - '.github/workflows/build_wheels.yml'
 jobs:
   build_wheels:
     runs-on: ${{ matrix.os }}
