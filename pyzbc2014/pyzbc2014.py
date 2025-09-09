@@ -53,10 +53,28 @@ import scipy as sp
 import ctypes
 from numpy.ctypeslib import ndpointer
 import warnings
-import pkg_resources
 
-# Locate the shared library and load the library
-lib_path = pkg_resources.resource_filename('pyzbc2014', 'model/libzbc2014.so')
+
+def get_lib_path():
+    from importlib.resources import files
+
+    lib_names = []
+    for name in files('pyzbc2014.model').iterdir():
+        if name.name.startswith('libzbc2014') and (
+                name.name.endswith('.so') or
+                name.name.endswith('.pyd') or
+                name.name.endswith('.dll')):
+            lib_names.append(str(name))
+
+    if not lib_names:
+        raise FileNotFoundError("Compiled library not found.")
+
+    # If multiple matches, return the first
+    return lib_names[0]
+
+
+lib_path = get_lib_path()
+
 
 def sim_ihc_zbc2014(
         px,
