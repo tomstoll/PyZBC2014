@@ -13,13 +13,13 @@ ext = {
     "darwin": ".so",
     "win32": ".dll"
 }[sys.platform if sys.platform != "darwin" else "darwin"]
-lib_path = os.path.join("pyzbc2014", "model", so_name + ext)
+lib_path = os.path.join("src", "pyzbc2014", "model", so_name + ext)
 # ------------------------
 
 class build_py(build_py_orig):
     def run(self):
         this_dir = os.path.abspath(os.path.dirname(__file__))
-        model_dir = os.path.join(this_dir, "pyzbc2014", "model")
+        model_dir = os.path.join(this_dir, "src", "pyzbc2014", "model")
         sources = [
             os.path.join(model_dir, "complex.c"),
             os.path.join(model_dir, "model_IHC.c"),
@@ -46,11 +46,11 @@ class bdist_wheel(_bdist_wheel):
         self.root_is_pure = False
 
 setup(
+    package_dir={"": "src"},
     cmdclass={
         "build_py": build_py,
         "bdist_wheel": bdist_wheel,
     },
-    include_package_data=True,
     data_files=[("pyzbc2014/model", [lib_path])],
     zip_safe=False,
 )

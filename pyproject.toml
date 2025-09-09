@@ -19,4 +19,5 @@ dependencies = [
 version = {attr = "pyzbc2014.__version__"}
 
 [tool.setuptools.packages.find]
+where = ["src"]
 include = ["pyzbc2014*"]
