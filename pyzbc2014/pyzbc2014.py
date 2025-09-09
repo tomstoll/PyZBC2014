@@ -53,17 +53,24 @@ import scipy as sp
 import ctypes
 from numpy.ctypeslib import ndpointer
 import warnings
-import os
 
 
 def get_lib_path():
-    # Find the shared library built by setuptools.Extension
-    import pyzbc2014.model
-    model_dir = os.path.dirname(pyzbc2014.model.__file__)
-    for fname in os.listdir(model_dir):
-        if fname.startswith('libzbc2014.') and fname.endswith('.so'):
-            return os.path.join(model_dir, fname)
-    raise FileNotFoundError("Compiled library not found.")
+    from importlib.resources import files
+
+    lib_names = []
+    for name in files('pyzbc2014.model').iterdir():
+        if name.name.startswith('libzbc2014') and (
+                name.name.endswith('.so') or
+                name.name.endswith('.pyd') or
+                name.name.endswith('.dll')):
+            lib_names.append(str(name))
+
+    if not lib_names:
+        raise FileNotFoundError("Compiled library not found.")
+
+    # If multiple matches, return the first
+    return lib_names[0]
 
 
 lib_path = get_lib_path()
