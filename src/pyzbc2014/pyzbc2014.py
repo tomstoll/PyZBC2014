@@ -73,9 +73,6 @@ def get_lib_path():
     return lib_names[0]
 
 
-lib_path = get_lib_path()
-
-
 def sim_ihc_zbc2014(
         px,
         cf=1e3,
@@ -136,6 +133,7 @@ def sim_ihc_zbc2014(
             species_int = 3
 
     # Open library, fetch IHCAN function, declare input types for call
+    lib_path = get_lib_path()
     lib = ctypes.cdll.LoadLibrary(lib_path)
     fun = lib.IHCAN
     fun.argtypes = [
@@ -223,6 +221,7 @@ def sim_anrate_zbc2014(
             fGn = ffGn(len(ihc), 1/fs, 0.9, fibertype)
 
     # Open library, fetch IHCAN function, declare input types for call
+    lib_path = get_lib_path()
     lib = ctypes.cdll.LoadLibrary(lib_path)
     fun = lib.Synapse
     fun.argtypes = [
