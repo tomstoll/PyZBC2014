@@ -4,6 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project] 
 name = "pyzbc2014"
+description = "Simple Python 3 wrapper for the Zilany, Bruce, and Carney (2014) auditory nerve model."
 dynamic = ["version"] # version is set dynamically, not as a string
 authors = [
   { name = "Daniel Guest", email = "daniel_guest@urmc.rochester.edu" },
