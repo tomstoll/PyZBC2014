@@ -66,7 +66,7 @@ Zilany, M. S., Bruce, I. C., & Carney, L. H. (2014). Updated parameters and expa
 
 
 # Developers
-This package is setup to build wheels and publish to PyPI whenever the version is incremented. To make any updates, follow these steps:
+This package is setup to build wheels whenever the version is incremented, but you have to manually trigger the action to publish to PyPI. To make any updates, follow these steps:
 1. Edit the code, fix bugs, update docs, etc.
 2. Bump the version in `src/pyzbc2014/__init__.py`
 3. Commit the changes and push to GitHub. For example:
@@ -75,9 +75,11 @@ git add --all
 git commit -m "[commit message]"
 git push origin main
 ```
-4. Create and push a matching git tag when ready to upload to PyPI
+4. Create and push a matching git tag when you want to build the wheels.
 ```
 git tag v0.0.1  # this tag needs to match the version in `pyzbc2014/__init__.py`
 git push origin v0.0.1  # again, match the tag
 ```
-GitHub Actions should then check the version, build the wheels, and publish to PyPI. Make sure it completes all these steps, then test by installing from PyPI in a clean environment.
+GitHub Actions should then check the version and build the wheels automatically. Make sure it completes these steps successfully. While you're debugging, you may not wish to bump the version every time. You can manually trigger the wheel building action workflow "Check version and publish wheels" in GitHub actions.
+
+To publish the new version to PyPI, the version must have been incremented. After testing the code and checking the wheels all built without error, run the GitHub action "Publish to PyPI".
