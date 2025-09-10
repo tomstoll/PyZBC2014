@@ -10,10 +10,14 @@ authors = [
   { name = "Thomas Stoll", email = "tomstoll@med.umich.edu" }
 ]
 readme = "README.md"
+requires-python = ">=3.10"
 dependencies = [
   "numpy>=1.21.0",
   "scipy>=1.7.0"
 ]
+license = "GNU AGPLv3"
+license-files = ["LICENSE*"]
+keywords = ["auditory", "nerve", "model", "zilany", "bruce", "carney", "2014"]
 
 [tool.setuptools.dynamic]
 version = {attr = "pyzbc2014.__version__"}

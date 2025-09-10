@@ -6,6 +6,12 @@ PyZBC2014 is licensed under the GNU AGPLv3 license (see `LICENSE`).
 Please send any questions or issues to `daniel_guest@urmc.rochester.edu`, or raise an issue on the [GitHub page](https://github.com/guestdaniel/PyZBC2014).
 
 # Install
+## Requirements
+- Python>=3.10
+- numpy>=1.21.0
+- scipy>=1.7.0
+
+## Install package
 Use pip to install
 ```
 pip install pyzbc2014
@@ -60,14 +66,14 @@ Zilany, M. S., Bruce, I. C., & Carney, L. H. (2014). Updated parameters and expa
 # Developers
 This package is setup to build wheels and publish to PyPI whenever the version is incremented. To make any updates, follow these steps:
 1. Edit the code, fix bugs, update docs, etc.
-2. Bump the version in `pyzbc2014/__init__.py`
+2. Bump the version in `src/pyzbc2014/__init__.py`
 3. Commit the changes and push to GitHub. For example:
 ```
 git add --all
 git commit -m "[commit message]"
 git push origin main
 ```
-4. Create and push a matching git tag
+4. Create and push a matching git tag when ready to upload to PyPI
 ```
 git tag v0.0.1  # this tag needs to match the version in `pyzbc2014/__init__.py`
 git push origin v0.0.1  # again, match the tag
