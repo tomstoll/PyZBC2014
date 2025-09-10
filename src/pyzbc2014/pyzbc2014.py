@@ -247,6 +247,7 @@ def sim_anrate_zbc2014(
 
 
 def ffGn(N, tdres, Hinput, fibertype):
+    from scipy.signal import resample
     """
     Generates fractional Gaussian noise (fGn) based on the specified parameters.
 
@@ -313,7 +314,7 @@ def ffGn(N, tdres, Hinput, fibertype):
             y = np.cumsum(y)
 
         # Resampling to match with the AN model
-        y = sp.signal.resample(y, resamp*len(y))
+        y = resample(y, resamp*len(y))
 
         if fibertype == "lsr":
             sigma = 3
