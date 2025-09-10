@@ -9,7 +9,9 @@ Please send any questions or issues to `daniel_guest@urmc.rochester.edu`, or rai
 ## Requirements
 - Python>=3.10
 - numpy>=1.21.0
-- scipy>=1.7.0
+- scipy>=1.7.2
+
+Ensure you have the required dependencies installed before trying to install this package — pip will likely produce an error if you don't.
 
 ## Install package
 Use pip to install
